@@ -163,6 +163,14 @@
 
   .preview-note { font-size:0.78rem; color:var(--ink-soft); margin-top:14px; padding:11px 14px; background:var(--wash); border-radius:var(--r-sm); border-left:3px solid var(--accent-2); }
 
+  .theme-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+  .theme-opt { border:1.5px solid var(--line); border-radius:var(--r-sm); padding:10px; cursor:pointer; background:var(--paper); transition:all 0.16s var(--ease); text-align:left; font-family:inherit; }
+  .theme-opt:hover { border-color:var(--accent-2); transform:translateY(-1px); }
+  .theme-opt.on { border-color:var(--accent); box-shadow:0 0 0 3px rgba(47,125,224,0.14); }
+  .theme-sw { display:flex; gap:4px; margin-bottom:7px; }
+  .theme-sw span { width:100%; height:16px; border-radius:4px; }
+  .theme-name { font-size:0.72rem; font-weight:600; color:var(--ink-2); line-height:1.2; }
+
   .modal-bg { display:none; position:fixed; inset:0; z-index:100; background:rgba(20,22,26,0.45); backdrop-filter:blur(5px); align-items:center; justify-content:center; padding:20px; }
   .modal-bg.open { display:flex; animation:mfade 0.22s; }
   @keyframes mfade { from{opacity:0} to{opacity:1} }
@@ -264,7 +272,7 @@
       <div>
         <div class="panel">
           <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Months</h3>
-          <p class="pd">The timeline rail. Add upcoming months or remove ones you don't need.</p>
+          <p class="pd">The timeline rail. Add as many months as you want — there's no limit. The dashboard keeps flowing as you go.</p>
           <div class="field"><label>Add month</label>
             <div class="f2">
               <select id="f-newmonth"><option>January</option><option>February</option><option>March</option><option>April</option><option>May</option><option>June</option><option>July</option><option>August</option><option>September</option><option>October</option><option>November</option><option>December</option></select>
@@ -275,8 +283,9 @@
           <div id="monthManager"></div>
         </div>
         <div class="panel">
-          <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/></svg> Animation &amp; feel</h3>
-          <p class="pd">Tune how priorities appear as you scroll. No code needed.</p>
+          <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/></svg> Theme &amp; feel</h3>
+          <p class="pd">Pick a colour theme and tune how priorities appear as you scroll. No code needed.</p>
+          <div class="field"><label>Colour theme</label><div class="theme-grid" id="themeGrid"></div></div>
           <div class="field"><label>Reveal style</label>
             <div class="seg" id="seg-style"><button data-style="rise">Rise &amp; fade</button><button data-style="zoom">Zoom in</button><button data-style="slide">Slide in</button></div>
           </div>
@@ -340,7 +349,17 @@ const DEFAULT = {
     { id:id(), title:'Mid-year progress review', desc:'Assess Q2 delivery against the plan and reset priorities where needed.', month:'m3', owner:'Team', prio:'high', status:'Upcoming', prog:0 },
     { id:id(), title:'Policy alignment audit', desc:'Confirm all active policies map cleanly to the new regulatory model.', month:'m3', owner:'Shinoy', prio:'low', status:'Upcoming', prog:0 }
   ],
-  anim:{ style:'rise', speed:'normal', stagger:90, progress:true, replay:true, bigmonth:true }
+  anim:{ style:'rise', speed:'normal', stagger:90, progress:true, replay:true, bigmonth:true },
+  theme:'blue'
+};
+
+const THEMES = {
+  blue:   { label:'Regulatory Blue', accent:'#1a4d8f', accent2:'#2f7de0', paper:'#fbfaf6', paper2:'#ffffff', wash:'#f4f2ec', line:'#e4e2db', lineSoft:'#efede7', ink:'#14161a', ink2:'#3a3f47', inkSoft:'#6b717b' },
+  forest: { label:'Forest Green',    accent:'#2f5d44', accent2:'#3e9268', paper:'#faf8f1', paper2:'#ffffff', wash:'#f0ede2', line:'#e2ded0', lineSoft:'#edeae0', ink:'#1a2620', ink2:'#374239', inkSoft:'#69736b' },
+  plum:   { label:'Royal Plum',      accent:'#5b3a72', accent2:'#8a5aa8', paper:'#faf7f9', paper2:'#ffffff', wash:'#f1ecf2', line:'#e6dfe6', lineSoft:'#efe9ef', ink:'#1f1722', ink2:'#3f3343', inkSoft:'#716873' },
+  ember:  { label:'Warm Ember',      accent:'#a3401f', accent2:'#d96b3a', paper:'#fbf7f2', paper2:'#ffffff', wash:'#f3ece3', line:'#e7dfd2', lineSoft:'#f0e9df', ink:'#241813', ink2:'#43332a', inkSoft:'#766a60' },
+  teal:   { label:'Coastal Teal',    accent:'#0f6b6b', accent2:'#2a9d9d', paper:'#f6faf9', paper2:'#ffffff', wash:'#e9f1ef', line:'#d8e3e0', lineSoft:'#e4eeec', ink:'#13211f', ink2:'#2d3f3c', inkSoft:'#5f706d' },
+  slate:  { label:'Midnight Slate',  accent:'#2b3a55', accent2:'#5170a3', paper:'#1a1d24', paper2:'#232732', wash:'#2a2f3b', line:'#353b49', lineSoft:'#2f3543', ink:'#eef1f6', ink2:'#c3c9d4', inkSoft:'#8b93a3' }
 };
 
 let state = load();
@@ -348,8 +367,23 @@ let editing = false;
 let modalId = null;
 let io = null;
 
-function load(){ try { const s=JSON.parse(localStorage.getItem(KEY)); if(s&&s.months&&s.items&&s.anim) return s; } catch(e){} return JSON.parse(JSON.stringify(DEFAULT)); }
+function load(){ try { const s=JSON.parse(localStorage.getItem(KEY)); if(s&&s.months&&s.items&&s.anim){ if(!s.theme) s.theme='blue'; return s; } } catch(e){} return JSON.parse(JSON.stringify(DEFAULT)); }
 function save(){ localStorage.setItem(KEY, JSON.stringify(state)); }
+
+function applyTheme(){
+  const t = THEMES[state.theme] || THEMES.blue;
+  const r = document.documentElement.style;
+  r.setProperty('--accent', t.accent);
+  r.setProperty('--accent-2', t.accent2);
+  r.setProperty('--paper', t.paper);
+  r.setProperty('--paper-2', t.paper2);
+  r.setProperty('--wash', t.wash);
+  r.setProperty('--line', t.line);
+  r.setProperty('--line-soft', t.lineSoft);
+  r.setProperty('--ink', t.ink);
+  r.setProperty('--ink-2', t.ink2);
+  r.setProperty('--ink-soft', t.inkSoft);
+}
 
 const PRIO = { high:'High', med:'Medium', low:'Low' };
 const SPEED_MS = { slow:900, normal:600, fast:380 };
@@ -457,12 +491,23 @@ function renderPlanner(){
 function moveItem(iid,dir){ const it=state.items.find(x=>x.id===iid); if(!it) return; const group=itemsFor(it.month); const pos=group.indexOf(it); const swap=group[pos+dir]; if(!swap) return; const gi=state.items.indexOf(it),gj=state.items.indexOf(swap); state.items[gi]=swap; state.items[gj]=it; save(); renderAll(); }
 function moveMonth(mid,dir){ const i=state.months.findIndex(m=>m.id===mid); const j=i+dir; if(j<0||j>=state.months.length) return; [state.months[i],state.months[j]]=[state.months[j],state.months[i]]; save(); renderAll(); }
 
+function renderThemes(){
+  const grid = document.getElementById('themeGrid');
+  grid.innerHTML = Object.entries(THEMES).map(([key,t])=>`
+    <button class="theme-opt ${state.theme===key?'on':''}" data-theme="${key}">
+      <div class="theme-sw"><span style="background:${t.accent}"></span><span style="background:${t.accent2}"></span><span style="background:${t.paper2};border:1px solid ${t.line}"></span></div>
+      <div class="theme-name">${t.label}</div>
+    </button>`).join('');
+  grid.querySelectorAll('[data-theme]').forEach(b=> b.onclick=()=>{ state.theme=b.dataset.theme; save(); applyTheme(); renderThemes(); toast(THEMES[b.dataset.theme].label+' applied'); });
+}
+
 function syncAnimUI(){
   const a = state.anim;
   document.querySelectorAll('#seg-style button').forEach(b=> b.classList.toggle('on', b.dataset.style===a.style));
   document.querySelectorAll('#seg-speed button').forEach(b=> b.classList.toggle('on', b.dataset.speed===a.speed));
   document.getElementById('set-stagger').value=a.stagger; document.getElementById('set-stagger-val').textContent=a.stagger+'ms';
   document.getElementById('set-progress').checked=a.progress; document.getElementById('set-replay').checked=a.replay; document.getElementById('set-bigmonth').checked=a.bigmonth;
+  renderThemes();
 }
 document.querySelectorAll('#seg-style button').forEach(b=> b.onclick=()=>{ state.anim.style=b.dataset.style; save(); syncAnimUI(); renderFlow(); toast('Reveal style updated'); });
 document.querySelectorAll('#seg-speed button').forEach(b=> b.onclick=()=>{ state.anim.speed=b.dataset.speed; save(); syncAnimUI(); renderFlow(); toast('Speed updated'); });
@@ -539,7 +584,7 @@ let toastT;
 function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2000); }
 
 function applyText(){ EDITABLE.forEach(k=>{ const el=document.querySelector(`[data-edit="${k}"]`); if(el) el.textContent=state[k]; }); }
-function renderAll(){ renderRail(); renderFlow(); renderPlanner(); applyText(); }
+function renderAll(){ applyTheme(); renderRail(); renderFlow(); renderPlanner(); applyText(); }
 renderAll();
 </script>
 </body>
