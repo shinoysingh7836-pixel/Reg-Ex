@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Regulatory Excellence Work Plan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Archivo:wght@400;500;600;700;800&family=Spline+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --ink:#14161a; --ink-2:#3a3f47; --ink-soft:#6b717b;
+    --line:#e4e2db; --line-soft:#efede7; --paper:#fbfaf6; --paper-2:#ffffff; --wash:#f4f2ec;
+    --accent:#1a4d8f; --accent-2:#2f7de0; --gold:#b8893a; --teal:#2a8a78;
+    --pr-high:#c4452f; --pr-med:#c08a2a; --pr-low:#4a8f6d;
+    --shadow-s:0 2px 10px rgba(20,22,26,0.05); --shadow-m:0 14px 40px rgba(20,22,26,0.10); --shadow-l:0 30px 70px rgba(20,22,26,0.16);
+    --r-lg:22px; --r-md:14px; --r-sm:9px; --ease:cubic-bezier(0.22,1,0.36,1);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html { scroll-behavior:smooth; }
+  body { background:var(--paper); color:var(--ink); font-family:'Spline Sans',system-ui,sans-serif; line-height:1.5; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+  body::before { content:""; position:fixed; inset:0; z-index:-2; background:radial-gradient(1000px 600px at 90% -10%,rgba(47,125,224,0.06),transparent 60%),radial-gradient(800px 500px at -5% 105%,rgba(184,137,58,0.06),transparent 55%); }
+  ::selection { background:rgba(47,125,224,0.18); }
+
+  .topbar { position:sticky; top:0; z-index:60; background:rgba(251,250,246,0.82); backdrop-filter:blur(14px) saturate(1.4); border-bottom:1px solid var(--line); padding:13px 30px; display:flex; align-items:center; gap:22px; }
+  .brand { display:flex; align-items:center; gap:13px; min-width:0; }
+  .brand-mark { width:40px; height:40px; border-radius:11px; flex-shrink:0; background:linear-gradient(140deg,var(--accent),var(--accent-2)); display:grid; place-items:center; box-shadow:inset 0 1px 0 rgba(255,255,255,0.25),0 4px 14px rgba(26,77,143,0.3); }
+  .brand-mark svg { width:22px; height:22px; }
+  .brand-text h1 { font-family:'Archivo',sans-serif; font-weight:800; font-size:1.12rem; letter-spacing:-0.02em; line-height:1.05; white-space:nowrap; }
+  .brand-text .sub { font-size:0.68rem; color:var(--ink-soft); letter-spacing:0.14em; text-transform:uppercase; font-weight:600; }
+  [contenteditable="true"] { outline:1.5px dashed var(--accent-2); border-radius:5px; padding:0 5px; background:rgba(47,125,224,0.04); }
+
+  .view-switch { margin-left:auto; display:flex; gap:3px; background:var(--wash); padding:4px; border-radius:999px; border:1px solid var(--line); }
+  .view-switch button { border:none; background:transparent; color:var(--ink-soft); cursor:pointer; font-family:inherit; font-size:0.82rem; font-weight:600; padding:8px 17px; border-radius:999px; transition:all 0.2s var(--ease); display:flex; align-items:center; gap:7px; }
+  .view-switch button svg { width:15px; height:15px; }
+  .view-switch button.active { background:var(--paper-2); color:var(--accent); box-shadow:var(--shadow-s); }
+
+  .edit-toggle { border:1px solid var(--line); background:var(--paper-2); color:var(--ink-2); cursor:pointer; font-family:inherit; font-size:0.8rem; font-weight:600; padding:8px 15px; border-radius:999px; display:flex; align-items:center; gap:7px; transition:all 0.2s var(--ease); }
+  .edit-toggle svg { width:14px; height:14px; }
+  .edit-toggle:hover { border-color:var(--accent-2); color:var(--accent); }
+  body.editing .edit-toggle { background:var(--accent); color:#fff; border-color:var(--accent); }
+
+  .view { display:none; }
+  .view.active { display:block; }
+
+  .dash-shell { display:grid; grid-template-columns:220px 1fr; gap:0; max-width:1320px; margin:0 auto; }
+  .rail { position:sticky; top:66px; height:calc(100vh - 66px); padding:46px 0 40px 30px; display:flex; flex-direction:column; }
+  .rail-label { font-size:0.66rem; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:26px; }
+  .rail-months { display:flex; flex-direction:column; gap:2px; flex:1; }
+  .rail-month { position:relative; font-family:'Archivo',sans-serif; font-weight:700; font-size:1.5rem; letter-spacing:-0.02em; color:var(--line); padding:7px 0 7px 22px; cursor:pointer; transition:color 0.45s var(--ease),transform 0.45s var(--ease); line-height:1.15; transform-origin:left center; }
+  .rail-month .yr { font-size:0.7rem; font-weight:600; letter-spacing:0.05em; color:var(--ink-soft); display:block; margin-top:-2px; opacity:0; transition:opacity 0.4s; }
+  .rail-month::before { content:""; position:absolute; left:0; top:50%; transform:translateY(-50%) scaleY(0); width:4px; height:60%; border-radius:999px; background:linear-gradient(var(--accent),var(--accent-2)); transition:transform 0.45s var(--ease); }
+  .rail-month.active { color:var(--ink); transform:scale(1.04); }
+  .rail-month.active::before { transform:translateY(-50%) scaleY(1); }
+  .rail-month.active .yr { opacity:1; }
+  .rail-month.passed { color:var(--ink-soft); }
+  .rail-foot { font-size:0.72rem; color:var(--ink-soft); margin-top:14px; }
+
+  .months-flow { padding:0 30px 30px 36px; }
+  .intro { padding:60px 0 30px; max-width:680px; }
+  .intro .eyebrow { font-size:0.72rem; font-weight:700; letter-spacing:0.16em; text-transform:uppercase; color:var(--accent); margin-bottom:14px; }
+  .intro h2 { font-family:'Newsreader',serif; font-weight:500; font-size:clamp(2.2rem,5vw,3.4rem); line-height:1.05; letter-spacing:-0.02em; }
+  .intro p { color:var(--ink-2); font-size:1.05rem; margin-top:16px; max-width:540px; }
+  .scroll-hint { display:flex; align-items:center; gap:9px; margin-top:30px; color:var(--ink-soft); font-size:0.82rem; font-weight:500; }
+  .scroll-hint svg { width:18px; height:18px; animation:bob 1.8s var(--ease) infinite; }
+  @keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(5px)} }
+
+  .month-block { min-height:88vh; padding:30px 0 70px; position:relative; }
+  .mb-head { display:flex; align-items:baseline; gap:18px; margin-bottom:8px; flex-wrap:wrap; }
+  .mb-month { font-family:'Archivo',sans-serif; font-weight:800; font-size:clamp(3rem,8vw,6rem); letter-spacing:-0.04em; line-height:0.92; background:linear-gradient(135deg,var(--ink),var(--ink-2)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .mb-year { font-family:'Archivo',sans-serif; font-weight:600; font-size:1.1rem; color:var(--accent); letter-spacing:0.04em; }
+  .mb-tag { color:var(--ink-2); font-size:1.02rem; max-width:600px; margin:6px 0 30px; }
+  .mb-tag[contenteditable] { display:inline-block; }
+  .mb-count { font-size:0.74rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-soft); background:var(--wash); padding:4px 12px; border-radius:999px; border:1px solid var(--line); }
+
+  .pri-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(290px,1fr)); gap:18px; }
+  .pri { background:var(--paper-2); border:1px solid var(--line); border-radius:var(--r-lg); padding:22px 22px 20px; box-shadow:var(--shadow-s); position:relative; overflow:hidden; cursor:pointer; transition:transform 0.5s var(--ease),box-shadow 0.5s var(--ease),border-color 0.3s; opacity:0; transform:translateY(38px); }
+  .pri.reveal { opacity:1; transform:translateY(0) !important; }
+  .pri:hover { box-shadow:var(--shadow-m); border-color:var(--line-soft); }
+  .pri::before { content:""; position:absolute; left:0; top:0; bottom:0; width:4px; background:var(--accent); transition:width 0.3s var(--ease); }
+  .pri.p-high::before { background:var(--pr-high); }
+  .pri.p-med::before { background:var(--pr-med); }
+  .pri.p-low::before { background:var(--pr-low); }
+  .pri:hover::before { width:7px; }
+  .pri-top { display:flex; align-items:center; gap:10px; margin-bottom:13px; }
+  .pri-rank { font-family:'Archivo',sans-serif; font-weight:800; font-size:1.5rem; color:var(--line); line-height:1; letter-spacing:-0.03em; }
+  .pri-flag { margin-left:auto; font-size:0.62rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; padding:3px 10px; border-radius:999px; }
+  .flag-high { background:rgba(196,69,47,0.12); color:var(--pr-high); }
+  .flag-med { background:rgba(192,138,42,0.14); color:var(--pr-med); }
+  .flag-low { background:rgba(74,143,109,0.14); color:var(--pr-low); }
+  .pri h4 { font-family:'Newsreader',serif; font-weight:600; font-size:1.32rem; line-height:1.18; letter-spacing:-0.01em; margin-bottom:8px; }
+  .pri-desc { color:var(--ink-soft); font-size:0.9rem; line-height:1.5; margin-bottom:16px; }
+  .pri-foot { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  .pri-owner { display:flex; align-items:center; gap:7px; font-size:0.8rem; color:var(--ink-2); font-weight:500; }
+  .pri-av { width:24px; height:24px; border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--accent-2)); color:#fff; display:grid; place-items:center; font-size:0.62rem; font-weight:700; }
+  .pri-status { font-size:0.76rem; font-weight:600; color:var(--ink-soft); display:flex; align-items:center; gap:6px; }
+  .pri-status .dot { width:8px; height:8px; border-radius:50%; background:var(--accent-2); }
+  .pri-prog { width:100%; height:5px; background:var(--wash); border-radius:999px; margin-top:14px; overflow:hidden; }
+  .pri-prog > span { display:block; height:100%; border-radius:999px; background:linear-gradient(90deg,var(--accent),var(--accent-2)); width:0; transition:width 0.9s var(--ease); }
+  .month-empty { color:var(--ink-soft); font-size:0.92rem; padding:30px 0; border:1.5px dashed var(--line); border-radius:var(--r-lg); text-align:center; }
+
+  .planner-wrap { max-width:1100px; margin:0 auto; padding:40px 30px 90px; }
+  .p-head { margin-bottom:30px; }
+  .p-head .eyebrow { font-size:0.72rem; font-weight:700; letter-spacing:0.16em; text-transform:uppercase; color:var(--accent); margin-bottom:8px; }
+  .p-head h2 { font-family:'Newsreader',serif; font-weight:500; font-size:2.4rem; letter-spacing:-0.02em; }
+  .p-head p { color:var(--ink-2); margin-top:6px; max-width:620px; }
+
+  .p-cols { display:grid; grid-template-columns:1.15fr 0.85fr; gap:22px; align-items:start; }
+  .panel { background:var(--paper-2); border:1px solid var(--line); border-radius:var(--r-lg); padding:26px; box-shadow:var(--shadow-s); margin-bottom:22px; }
+  .panel h3 { font-family:'Newsreader',serif; font-weight:600; font-size:1.3rem; display:flex; align-items:center; gap:10px; margin-bottom:4px; }
+  .panel h3 svg { width:19px; height:19px; color:var(--accent); }
+  .panel .pd { color:var(--ink-soft); font-size:0.86rem; margin-bottom:20px; }
+
+  .field { margin-bottom:16px; }
+  .field label { display:block; font-size:0.72rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--accent); margin-bottom:6px; }
+  .field input, .field select, .field textarea { width:100%; font-family:inherit; font-size:0.9rem; color:var(--ink); background:var(--paper); border:1px solid var(--line); border-radius:var(--r-sm); padding:10px 12px; transition:border 0.18s,box-shadow 0.18s; }
+  .field input:focus, .field select:focus, .field textarea:focus { outline:none; border-color:var(--accent-2); box-shadow:0 0 0 3px rgba(47,125,224,0.1); }
+  .field textarea { resize:vertical; min-height:70px; }
+  .f2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .f3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; }
+
+  .btn { font-family:inherit; font-weight:600; font-size:0.88rem; border:none; cursor:pointer; padding:11px 22px; border-radius:var(--r-sm); transition:all 0.18s var(--ease); display:inline-flex; align-items:center; gap:7px; }
+  .btn svg { width:15px; height:15px; }
+  .btn-primary { background:var(--accent); color:#fff; box-shadow:0 4px 14px rgba(26,77,143,0.25); }
+  .btn-primary:hover { background:#163f74; transform:translateY(-1px); }
+  .btn-ghost { background:var(--wash); color:var(--accent); }
+  .btn-ghost:hover { background:var(--line-soft); }
+  .btn-danger { background:transparent; color:var(--pr-high); }
+  .btn-danger:hover { background:rgba(196,69,47,0.08); }
+
+  .range-wrap { display:flex; align-items:center; gap:12px; }
+  .range-wrap input[type=range] { flex:1; accent-color:var(--accent); }
+  .range-val { font-weight:700; color:var(--accent); min-width:44px; text-align:right; }
+
+  .row { display:flex; align-items:center; gap:13px; padding:12px 14px; border:1px solid var(--line); border-radius:var(--r-md); margin-bottom:9px; background:var(--paper); transition:border 0.16s; }
+  .row:hover { border-color:var(--accent-2); }
+  .row-chip { width:9px; height:34px; border-radius:999px; flex-shrink:0; }
+  .row-main { flex:1; min-width:0; }
+  .row-main .rt { font-weight:600; font-size:0.9rem; }
+  .row-main .rs { font-size:0.74rem; color:var(--ink-soft); }
+  .row-tag { font-size:0.66rem; font-weight:700; text-transform:uppercase; padding:3px 9px; border-radius:999px; background:var(--wash); color:var(--accent); }
+  .row-act { display:flex; gap:3px; }
+  .row-act button { border:none; background:transparent; cursor:pointer; padding:6px; border-radius:7px; color:var(--ink-soft); transition:all 0.13s; }
+  .row-act button:hover { background:var(--wash); color:var(--pr-high); }
+  .row-act button svg { width:16px; height:16px; display:block; }
+  .reorder { display:flex; flex-direction:column; gap:1px; }
+  .reorder button { padding:2px; line-height:0.8; border:none; background:transparent; cursor:pointer; color:var(--ink-soft); border-radius:5px; }
+  .reorder button:hover:not([disabled]) { background:var(--wash); color:var(--accent); }
+
+  .seg { display:flex; gap:6px; flex-wrap:wrap; }
+  .seg button { flex:1; min-width:80px; border:1px solid var(--line); background:var(--paper); color:var(--ink-2); font-family:inherit; font-size:0.82rem; font-weight:600; padding:10px; border-radius:var(--r-sm); cursor:pointer; transition:all 0.16s; }
+  .seg button.on { background:var(--accent); color:#fff; border-color:var(--accent); }
+  .toggle-row { display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--line-soft); gap:14px; }
+  .toggle-row:last-child { border-bottom:none; }
+  .toggle-row .tl { font-size:0.9rem; font-weight:500; }
+  .toggle-row .td { font-size:0.76rem; color:var(--ink-soft); }
+  .switch { position:relative; width:46px; height:26px; flex-shrink:0; }
+  .switch input { opacity:0; width:0; height:0; }
+  .switch .sl { position:absolute; inset:0; background:var(--line); border-radius:999px; transition:0.25s; cursor:pointer; }
+  .switch .sl::before { content:""; position:absolute; width:20px; height:20px; left:3px; top:3px; background:#fff; border-radius:50%; transition:0.25s var(--ease); box-shadow:var(--shadow-s); }
+  .switch input:checked + .sl { background:var(--accent); }
+  .switch input:checked + .sl::before { transform:translateX(20px); }
+
+  .preview-note { font-size:0.78rem; color:var(--ink-soft); margin-top:14px; padding:11px 14px; background:var(--wash); border-radius:var(--r-sm); border-left:3px solid var(--accent-2); }
+
+  .modal-bg { display:none; position:fixed; inset:0; z-index:100; background:rgba(20,22,26,0.45); backdrop-filter:blur(5px); align-items:center; justify-content:center; padding:20px; }
+  .modal-bg.open { display:flex; animation:mfade 0.22s; }
+  @keyframes mfade { from{opacity:0} to{opacity:1} }
+  .modal { background:var(--paper-2); border-radius:var(--r-lg); padding:28px; width:100%; max-width:540px; max-height:88vh; overflow-y:auto; box-shadow:var(--shadow-l); animation:mpop 0.28s var(--ease); }
+  @keyframes mpop { from{transform:scale(0.95) translateY(10px); opacity:0} to{transform:none; opacity:1} }
+  .modal-head { display:flex; align-items:flex-start; gap:12px; margin-bottom:20px; }
+  .modal-head h3 { font-family:'Newsreader',serif; font-weight:600; font-size:1.35rem; flex:1; }
+  .modal-close { border:none; background:var(--wash); width:32px; height:32px; border-radius:50%; cursor:pointer; font-size:1.1rem; color:var(--ink-soft); flex-shrink:0; }
+  .modal-close:hover { background:var(--line); }
+  .modal-foot { display:flex; gap:10px; margin-top:22px; }
+  .modal-foot .btn-primary { flex:1; justify-content:center; }
+
+  .toast { position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--ink); color:var(--paper); font-size:0.85rem; font-weight:500; padding:12px 22px; border-radius:999px; box-shadow:var(--shadow-m); opacity:0; pointer-events:none; transition:all 0.3s var(--ease); z-index:200; }
+  .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+  @media (max-width:900px) {
+    .dash-shell { grid-template-columns:1fr; }
+    .rail { position:sticky; top:58px; height:auto; flex-direction:row; padding:12px 16px; background:rgba(251,250,246,0.9); backdrop-filter:blur(10px); border-bottom:1px solid var(--line); overflow-x:auto; z-index:50; }
+    .rail-label, .rail-foot { display:none; }
+    .rail-months { flex-direction:row; gap:14px; }
+    .rail-month { font-size:1.05rem; padding:4px 0 4px 12px; white-space:nowrap; }
+    .rail-month .yr { display:none; }
+    .months-flow { padding:0 16px 30px; }
+    .month-block { min-height:auto; padding:24px 0 50px; }
+    .p-cols { grid-template-columns:1fr; }
+    .f3 { grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <div class="brand-mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 6v6c0 5 3.5 8 8 10 4.5-2 8-5 8-10V6l-8-4Z"/><path d="m9 12 2 2 4-4"/></svg>
+    </div>
+    <div class="brand-text">
+      <h1 data-edit="title">Regulatory Excellence Work Plan</h1>
+      <div class="sub" data-edit="sub">Division Priorities · Monthly</div>
+    </div>
+  </div>
+  <div class="view-switch">
+    <button class="vbtn active" data-view="dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>Dashboard</button>
+    <button class="vbtn" data-view="planner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>Planner</button>
+  </div>
+  <button class="edit-toggle" id="editToggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><span id="editLabel">Edit</span></button>
+</div>
+
+<section class="view active" id="view-dashboard">
+  <div class="dash-shell">
+    <aside class="rail">
+      <div class="rail-label">Timeline</div>
+      <div class="rail-months" id="railMonths"></div>
+      <div class="rail-foot" id="railFoot"></div>
+    </aside>
+    <main class="months-flow">
+      <div class="intro">
+        <div class="eyebrow" data-edit="eyebrow">Regulatory Excellence Division</div>
+        <h2 data-edit="headline">A month-by-month view of what matters most.</h2>
+        <p data-edit="introtext">Scroll to move through the calendar. Each month brings its own set of priorities into focus — what we're driving, who owns it, and where it stands.</p>
+        <div class="scroll-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>Scroll to begin</div>
+      </div>
+      <div id="monthsFlow"></div>
+    </main>
+  </div>
+</section>
+
+<section class="view" id="view-planner">
+  <div class="planner-wrap">
+    <div class="p-head">
+      <div class="eyebrow">Plan &amp; Configure</div>
+      <h2>Build the work plan</h2>
+      <p>Define months, add priorities, assign owners, and tune how the dashboard animates — all here. Everything you set appears on the dashboard instantly.</p>
+    </div>
+    <div class="p-cols">
+      <div>
+        <div class="panel">
+          <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg> Add a priority</h3>
+          <p class="pd">Each priority is a card on the dashboard, grouped under its month.</p>
+          <div class="field"><label>Priority title</label><input type="text" id="f-title" placeholder="e.g. Modernize inspection framework" /></div>
+          <div class="field"><label>Description / goal</label><textarea id="f-desc" placeholder="What are we trying to achieve?"></textarea></div>
+          <div class="f3">
+            <div class="field"><label>Month</label><select id="f-month"></select></div>
+            <div class="field"><label>Owner</label><input type="text" id="f-owner" placeholder="Name" /></div>
+            <div class="field"><label>Priority</label><select id="f-prio"><option value="high">High</option><option value="med" selected>Medium</option><option value="low">Low</option></select></div>
+          </div>
+          <div class="f2">
+            <div class="field"><label>Status</label><input type="text" id="f-status" placeholder="e.g. In progress" /></div>
+            <div class="field"><label>Progress</label><div class="range-wrap"><input type="range" id="f-prog" min="0" max="100" step="5" value="0" /><span class="range-val" id="f-prog-val">0%</span></div></div>
+          </div>
+          <button class="btn btn-primary" id="addBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg> Add priority</button>
+        </div>
+        <div class="panel">
+          <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg> All priorities</h3>
+          <p class="pd">Grouped by month, in display order. Edit, delete, or reorder within a month.</p>
+          <div id="plannerList"></div>
+        </div>
+      </div>
+      <div>
+        <div class="panel">
+          <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Months</h3>
+          <p class="pd">The timeline rail. Add upcoming months or remove ones you don't need.</p>
+          <div class="field"><label>Add month</label>
+            <div class="f2">
+              <select id="f-newmonth"><option>January</option><option>February</option><option>March</option><option>April</option><option>May</option><option>June</option><option>July</option><option>August</option><option>September</option><option>October</option><option>November</option><option>December</option></select>
+              <input type="number" id="f-newyear" value="2026" min="2024" max="2035" />
+            </div>
+          </div>
+          <button class="btn btn-ghost" id="addMonthBtn" style="width:100%; justify-content:center; margin-bottom:16px;">Add month</button>
+          <div id="monthManager"></div>
+        </div>
+        <div class="panel">
+          <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/></svg> Animation &amp; feel</h3>
+          <p class="pd">Tune how priorities appear as you scroll. No code needed.</p>
+          <div class="field"><label>Reveal style</label>
+            <div class="seg" id="seg-style"><button data-style="rise">Rise &amp; fade</button><button data-style="zoom">Zoom in</button><button data-style="slide">Slide in</button></div>
+          </div>
+          <div class="field"><label>Animation speed</label>
+            <div class="seg" id="seg-speed"><button data-speed="slow">Gentle</button><button data-speed="normal">Balanced</button><button data-speed="fast">Snappy</button></div>
+          </div>
+          <div class="field"><label>Stagger between cards</label>
+            <div class="range-wrap"><input type="range" id="set-stagger" min="0" max="180" step="10" /><span class="range-val" id="set-stagger-val">90ms</span></div>
+          </div>
+          <div class="toggle-row"><div><div class="tl">Animate progress bars</div><div class="td">Bars fill when a month enters view</div></div><label class="switch"><input type="checkbox" id="set-progress" /><span class="sl"></span></label></div>
+          <div class="toggle-row"><div><div class="tl">Re-animate on scroll up</div><div class="td">Replay reveals each time, like Apple pages</div></div><label class="switch"><input type="checkbox" id="set-replay" /><span class="sl"></span></label></div>
+          <div class="toggle-row"><div><div class="tl">Big month headings</div><div class="td">Oversized month titles in each section</div></div><label class="switch"><input type="checkbox" id="set-bigmonth" /><span class="sl"></span></label></div>
+          <div class="preview-note">Tip: switch to the Dashboard and scroll to feel your changes live. Everything saves automatically.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <div class="modal-head"><h3 id="m-title">Edit priority</h3><button class="modal-close" id="modalClose">&times;</button></div>
+    <div class="field"><label>Title</label><input type="text" id="m-name" /></div>
+    <div class="field"><label>Description / goal</label><textarea id="m-desc"></textarea></div>
+    <div class="f3">
+      <div class="field"><label>Month</label><select id="m-month"></select></div>
+      <div class="field"><label>Owner</label><input type="text" id="m-owner" /></div>
+      <div class="field"><label>Priority</label><select id="m-prio"><option value="high">High</option><option value="med">Medium</option><option value="low">Low</option></select></div>
+    </div>
+    <div class="f2">
+      <div class="field"><label>Status</label><input type="text" id="m-status" /></div>
+      <div class="field"><label>Progress</label><div class="range-wrap"><input type="range" id="m-prog" min="0" max="100" step="5" /><span class="range-val" id="m-prog-val">0%</span></div></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-danger" id="m-delete">Delete</button><button class="btn btn-primary" id="m-save">Save changes</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const KEY = 'regExcellenceWorkPlan_v1';
+function id(){ return 'p' + Math.random().toString(36).slice(2,9); }
+
+const DEFAULT = {
+  title:'Regulatory Excellence Work Plan',
+  sub:'Division Priorities · Monthly',
+  eyebrow:'Regulatory Excellence Division',
+  headline:'A month-by-month view of what matters most.',
+  introtext:"Scroll to move through the calendar. Each month brings its own set of priorities into focus — what we're driving, who owns it, and where it stands.",
+  months:[
+    { id:'m1', name:'May', year:2026, tag:'Foundations — getting the framework and people in place.' },
+    { id:'m2', name:'June', year:2026, tag:'Build & engage — rolling priorities into active delivery.' },
+    { id:'m3', name:'July', year:2026, tag:'Review & refine — checking progress and adjusting course.' }
+  ],
+  items:[
+    { id:id(), title:'Modernize inspection framework', desc:'Update the inspection model to reflect the reorganized ministry structure and current regulatory needs.', month:'m1', owner:'Shinoy', prio:'high', status:'In progress', prog:45 },
+    { id:id(), title:'Stakeholder engagement plan', desc:'Map key stakeholders and define a cadence for consultation through the quarter.', month:'m1', owner:'Team', prio:'med', status:'Planning', prog:20 },
+    { id:id(), title:'Data governance baseline', desc:'Establish standards for how regulatory data is captured, stored, and reported.', month:'m1', owner:'Shinoy', prio:'med', status:'Not started', prog:0 },
+    { id:id(), title:'Launch compliance dashboard', desc:'Deliver the live view leadership uses to track compliance across programs.', month:'m2', owner:'Team', prio:'high', status:'On track', prog:35 },
+    { id:id(), title:'Training & onboarding rollout', desc:'Run sessions so staff are fluent in the updated processes and tools.', month:'m2', owner:'Shinoy', prio:'med', status:'Scheduled', prog:10 },
+    { id:id(), title:'Mid-year progress review', desc:'Assess Q2 delivery against the plan and reset priorities where needed.', month:'m3', owner:'Team', prio:'high', status:'Upcoming', prog:0 },
+    { id:id(), title:'Policy alignment audit', desc:'Confirm all active policies map cleanly to the new regulatory model.', month:'m3', owner:'Shinoy', prio:'low', status:'Upcoming', prog:0 }
+  ],
+  anim:{ style:'rise', speed:'normal', stagger:90, progress:true, replay:true, bigmonth:true }
+};
+
+let state = load();
+let editing = false;
+let modalId = null;
+let io = null;
+
+function load(){ try { const s=JSON.parse(localStorage.getItem(KEY)); if(s&&s.months&&s.items&&s.anim) return s; } catch(e){} return JSON.parse(JSON.stringify(DEFAULT)); }
+function save(){ localStorage.setItem(KEY, JSON.stringify(state)); }
+
+const PRIO = { high:'High', med:'Medium', low:'Low' };
+const SPEED_MS = { slow:900, normal:600, fast:380 };
+function initials(n){ if(!n) return '·'; const p=n.trim().split(/\s+/); return (p[0][0]+(p[1]?p[1][0]:'')).toUpperCase(); }
+function esc(s){ return (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function monthById(mid){ return state.months.find(m=>m.id===mid); }
+function itemsFor(mid){ return state.items.filter(i=>i.month===mid); }
+
+function renderRail(){
+  const rail = document.getElementById('railMonths');
+  rail.innerHTML = state.months.map(m=>`<div class="rail-month" data-jump="${m.id}">${esc(m.name)}<span class="yr">${m.year}</span></div>`).join('');
+  rail.querySelectorAll('[data-jump]').forEach(el=>{ el.onclick=()=>{ const t=document.getElementById('block-'+el.dataset.jump); if(t) t.scrollIntoView({behavior:'smooth',block:'start'}); }; });
+  document.getElementById('railFoot').textContent = state.items.length+' priorities · '+state.months.length+' months';
+}
+
+function transformFor(style){ if(style==='zoom') return 'scale(0.9)'; if(style==='slide') return 'translateX(40px)'; return 'translateY(38px)'; }
+function renderFlow(){
+  const flow = document.getElementById('monthsFlow');
+  const a = state.anim; const dur = SPEED_MS[a.speed]||600;
+  flow.innerHTML = state.months.map(m=>{
+    const items = itemsFor(m.id);
+    const cards = items.length ? items.map((it,idx)=>`
+      <div class="pri p-${it.prio}" data-item="${it.id}" data-idx="${idx}" style="transition:opacity ${dur}ms var(--ease),transform ${dur}ms var(--ease);">
+        <div class="pri-top"><span class="pri-rank">${String(idx+1).padStart(2,'0')}</span><span class="pri-flag flag-${it.prio}">${PRIO[it.prio]}</span></div>
+        <h4>${esc(it.title)}</h4>
+        <div class="pri-desc">${esc(it.desc)}</div>
+        <div class="pri-foot">${it.owner?`<span class="pri-owner"><span class="pri-av">${initials(it.owner)}</span>${esc(it.owner)}</span>`:''}${it.status?`<span class="pri-status"><span class="dot"></span>${esc(it.status)}</span>`:''}</div>
+        ${it.prog>0?`<div class="pri-prog"><span data-fill="${it.prog}"></span></div>`:''}
+      </div>`).join('') : `<div class="month-empty">No priorities set for ${esc(m.name)} yet. Add some in the Planner.</div>`;
+    const monthStyle = a.bigmonth ? '' : 'style="font-size:clamp(2rem,5vw,3.4rem)"';
+    return `<section class="month-block" id="block-${m.id}" data-month="${m.id}">
+      <div class="mb-head"><div class="mb-month" ${monthStyle}>${esc(m.name)}</div><div class="mb-year">${m.year}</div><div class="mb-count">${items.length} ${items.length===1?'priority':'priorities'}</div></div>
+      <div class="mb-tag" data-monthtag="${m.id}">${esc(m.tag||'')}</div>
+      <div class="pri-grid">${cards}</div>
+    </section>`;
+  }).join('');
+  flow.querySelectorAll('.pri').forEach(el=>{ el.style.transform = transformFor(a.style); });
+  setupObserver();
+  bindCards();
+}
+
+function setupObserver(){
+  if(io) io.disconnect();
+  const a = state.anim;
+  io = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      const block = e.target; const cards = block.querySelectorAll('.pri');
+      if(e.isIntersecting){
+        cards.forEach(c=>{ const idx=+c.dataset.idx||0; c.style.transitionDelay=(idx*a.stagger)+'ms'; c.classList.add('reveal'); if(a.progress){ const f=c.querySelector('[data-fill]'); if(f) setTimeout(()=> f.style.width=f.dataset.fill+'%', 150+idx*a.stagger); } });
+        setActiveMonth(block.dataset.month);
+      } else if(a.replay){
+        cards.forEach(c=>{ c.classList.remove('reveal'); c.style.transitionDelay='0ms'; const f=c.querySelector('[data-fill]'); if(f) f.style.width='0'; });
+      }
+    });
+  }, { threshold:0.18, rootMargin:'-10% 0px -25% 0px' });
+  document.querySelectorAll('.month-block').forEach(b=> io.observe(b));
+}
+function setActiveMonth(mid){
+  const idx = state.months.findIndex(m=>m.id===mid);
+  document.querySelectorAll('.rail-month').forEach((el,i)=>{ el.classList.toggle('active', i===idx); el.classList.toggle('passed', i<idx); });
+}
+function bindCards(){
+  document.querySelectorAll('[data-monthtag]').forEach(el=>{ el.contentEditable=editing; if(editing){ el.onblur=()=>{ const m=monthById(el.dataset.monthtag); if(m){ m.tag=el.textContent.trim(); save(); } }; } });
+  document.querySelectorAll('.pri').forEach(el=>{ el.onclick=()=> openModal(el.dataset.item); });
+}
+
+function renderPlanner(){
+  const opts = state.months.map(m=>`<option value="${m.id}">${esc(m.name)} ${m.year}</option>`).join('');
+  document.getElementById('f-month').innerHTML = opts;
+  document.getElementById('m-month').innerHTML = opts;
+  const mm = document.getElementById('monthManager');
+  mm.innerHTML = state.months.map((m,i)=>`
+    <div class="row">
+      <span class="row-chip" style="background:linear-gradient(var(--accent),var(--accent-2))"></span>
+      <div class="row-main"><div class="rt">${esc(m.name)} ${m.year}</div><div class="rs">${itemsFor(m.id).length} priorities</div></div>
+      <div class="reorder"><button data-mup="${m.id}" ${i===0?'disabled style=opacity:.3':''}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg></button><button data-mdn="${m.id}" ${i===state.months.length-1?'disabled style=opacity:.3':''}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button></div>
+      <div class="row-act"><button data-delmonth="${m.id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></button></div>
+    </div>`).join('');
+  mm.querySelectorAll('[data-delmonth]').forEach(b=> b.onclick=()=>deleteMonth(b.dataset.delmonth));
+  mm.querySelectorAll('[data-mup]').forEach(b=> b.onclick=()=>moveMonth(b.dataset.mup,-1));
+  mm.querySelectorAll('[data-mdn]').forEach(b=> b.onclick=()=>moveMonth(b.dataset.mdn,1));
+
+  const list = document.getElementById('plannerList');
+  if(state.items.length===0){ list.innerHTML='<div class="month-empty">No priorities yet — add one above.</div>'; }
+  else {
+    list.innerHTML = state.months.map(m=>{
+      const items = itemsFor(m.id); if(!items.length) return '';
+      return `<div style="font-size:0.72rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-soft);margin:14px 0 8px;">${esc(m.name)} ${m.year}</div>`+
+        items.map((it,idx)=>`<div class="row">
+          <span class="row-chip" style="background:var(--pr-${it.prio})"></span>
+          <div class="row-main"><div class="rt">${esc(it.title)}</div><div class="rs">${it.owner?esc(it.owner)+' · ':''}${it.status?esc(it.status)+' · ':''}${it.prog}%</div></div>
+          <span class="row-tag">${PRIO[it.prio]}</span>
+          <div class="reorder"><button data-up="${it.id}" ${idx===0?'disabled style=opacity:.3':''}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg></button><button data-dn="${it.id}" ${idx===items.length-1?'disabled style=opacity:.3':''}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button></div>
+          <div class="row-act"><button data-edit="${it.id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button data-del="${it.id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></button></div>
+        </div>`).join('');
+    }).join('');
+    list.querySelectorAll('[data-edit]').forEach(b=> b.onclick=()=>openModal(b.dataset.edit));
+    list.querySelectorAll('[data-del]').forEach(b=> b.onclick=()=>{ if(confirm('Delete this priority?')){ state.items=state.items.filter(x=>x.id!==b.dataset.del); save(); renderAll(); toast('Priority deleted'); } });
+    list.querySelectorAll('[data-up]').forEach(b=> b.onclick=()=>moveItem(b.dataset.up,-1));
+    list.querySelectorAll('[data-dn]').forEach(b=> b.onclick=()=>moveItem(b.dataset.dn,1));
+  }
+  syncAnimUI();
+}
+
+function moveItem(iid,dir){ const it=state.items.find(x=>x.id===iid); if(!it) return; const group=itemsFor(it.month); const pos=group.indexOf(it); const swap=group[pos+dir]; if(!swap) return; const gi=state.items.indexOf(it),gj=state.items.indexOf(swap); state.items[gi]=swap; state.items[gj]=it; save(); renderAll(); }
+function moveMonth(mid,dir){ const i=state.months.findIndex(m=>m.id===mid); const j=i+dir; if(j<0||j>=state.months.length) return; [state.months[i],state.months[j]]=[state.months[j],state.months[i]]; save(); renderAll(); }
+
+function syncAnimUI(){
+  const a = state.anim;
+  document.querySelectorAll('#seg-style button').forEach(b=> b.classList.toggle('on', b.dataset.style===a.style));
+  document.querySelectorAll('#seg-speed button').forEach(b=> b.classList.toggle('on', b.dataset.speed===a.speed));
+  document.getElementById('set-stagger').value=a.stagger; document.getElementById('set-stagger-val').textContent=a.stagger+'ms';
+  document.getElementById('set-progress').checked=a.progress; document.getElementById('set-replay').checked=a.replay; document.getElementById('set-bigmonth').checked=a.bigmonth;
+}
+document.querySelectorAll('#seg-style button').forEach(b=> b.onclick=()=>{ state.anim.style=b.dataset.style; save(); syncAnimUI(); renderFlow(); toast('Reveal style updated'); });
+document.querySelectorAll('#seg-speed button').forEach(b=> b.onclick=()=>{ state.anim.speed=b.dataset.speed; save(); syncAnimUI(); renderFlow(); toast('Speed updated'); });
+document.getElementById('set-stagger').oninput = e=>{ document.getElementById('set-stagger-val').textContent=e.target.value+'ms'; };
+document.getElementById('set-stagger').onchange = e=>{ state.anim.stagger=+e.target.value; save(); renderFlow(); };
+document.getElementById('set-progress').onchange = e=>{ state.anim.progress=e.target.checked; save(); renderFlow(); };
+document.getElementById('set-replay').onchange = e=>{ state.anim.replay=e.target.checked; save(); renderFlow(); };
+document.getElementById('set-bigmonth').onchange = e=>{ state.anim.bigmonth=e.target.checked; save(); renderFlow(); };
+
+document.getElementById('addMonthBtn').onclick = ()=>{
+  const name=document.getElementById('f-newmonth').value; const year=+document.getElementById('f-newyear').value;
+  if(state.months.some(m=>m.name===name && m.year===year)){ toast('That month already exists'); return; }
+  state.months.push({ id:'m'+Math.random().toString(36).slice(2,7), name, year, tag:'' });
+  save(); renderAll(); toast(name+' '+year+' added');
+};
+function deleteMonth(mid){
+  const m=monthById(mid); const n=itemsFor(mid).length;
+  if(state.months.length<=1){ toast('Keep at least one month'); return; }
+  if(!confirm(`Delete ${m.name} ${m.year}?${n?` Its ${n} priority(ies) will be removed.`:''}`)) return;
+  state.items=state.items.filter(i=>i.month!==mid); state.months=state.months.filter(x=>x.id!==mid);
+  save(); renderAll(); toast('Month removed');
+}
+
+document.getElementById('f-prog').oninput = e=> document.getElementById('f-prog-val').textContent=e.target.value+'%';
+document.getElementById('m-prog').oninput = e=> document.getElementById('m-prog-val').textContent=e.target.value+'%';
+document.getElementById('addBtn').onclick = ()=>{
+  const title=document.getElementById('f-title').value.trim();
+  if(!title){ toast('Give the priority a title'); return; }
+  state.items.push({ id:id(), title, desc:document.getElementById('f-desc').value.trim(), month:document.getElementById('f-month').value, owner:document.getElementById('f-owner').value.trim(), prio:document.getElementById('f-prio').value, status:document.getElementById('f-status').value.trim(), prog:+document.getElementById('f-prog').value });
+  save(); renderAll();
+  ['f-title','f-desc','f-owner','f-status'].forEach(i=>document.getElementById(i).value='');
+  document.getElementById('f-prog').value=0; document.getElementById('f-prog-val').textContent='0%';
+  toast('Priority added');
+};
+
+function openModal(iid){
+  const it=state.items.find(x=>x.id===iid); if(!it) return; modalId=iid;
+  document.getElementById('m-name').value=it.title; document.getElementById('m-desc').value=it.desc||'';
+  document.getElementById('m-month').value=it.month; document.getElementById('m-owner').value=it.owner||'';
+  document.getElementById('m-prio').value=it.prio; document.getElementById('m-status').value=it.status||'';
+  document.getElementById('m-prog').value=it.prog; document.getElementById('m-prog-val').textContent=it.prog+'%';
+  document.getElementById('modalBg').classList.add('open');
+}
+function closeModal(){ document.getElementById('modalBg').classList.remove('open'); modalId=null; }
+document.getElementById('modalClose').onclick = closeModal;
+document.getElementById('modalBg').onclick = e=>{ if(e.target.id==='modalBg') closeModal(); };
+document.getElementById('m-save').onclick = ()=>{
+  const it=state.items.find(x=>x.id===modalId); if(!it) return;
+  it.title=document.getElementById('m-name').value.trim()||it.title; it.desc=document.getElementById('m-desc').value.trim();
+  it.month=document.getElementById('m-month').value; it.owner=document.getElementById('m-owner').value.trim();
+  it.prio=document.getElementById('m-prio').value; it.status=document.getElementById('m-status').value.trim();
+  it.prog=+document.getElementById('m-prog').value;
+  save(); renderAll(); closeModal(); toast('Saved');
+};
+document.getElementById('m-delete').onclick = ()=>{ if(!confirm('Delete this priority?')) return; state.items=state.items.filter(x=>x.id!==modalId); save(); renderAll(); closeModal(); toast('Deleted'); };
+
+const EDITABLE = ['title','sub','eyebrow','headline','introtext'];
+document.getElementById('editToggle').onclick = ()=>{
+  editing=!editing; document.body.classList.toggle('editing',editing);
+  document.getElementById('editLabel').textContent = editing?'Done':'Edit';
+  document.querySelectorAll('[data-edit]').forEach(el=>{ const key=el.dataset.edit; el.contentEditable=editing; if(editing){ el.onblur=()=>{ state[key]=el.textContent.trim()||state[key]; save(); }; } });
+  bindCards();
+};
+
+document.querySelectorAll('.vbtn').forEach(b=>{
+  b.onclick=()=>{ const v=b.dataset.view;
+    document.querySelectorAll('.vbtn').forEach(x=>x.classList.toggle('active',x===b));
+    document.querySelectorAll('.view').forEach(s=>s.classList.toggle('active', s.id==='view-'+v));
+    if(v==='dashboard'){ renderFlow(); window.scrollTo({top:0}); }
+  };
+});
+
+let toastT;
+function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2000); }
+
+function applyText(){ EDITABLE.forEach(k=>{ const el=document.querySelector(`[data-edit="${k}"]`); if(el) el.textContent=state[k]; }); }
+function renderAll(){ renderRail(); renderFlow(); renderPlanner(); applyText(); }
+renderAll();
+</script>
+</body>
+</html>
