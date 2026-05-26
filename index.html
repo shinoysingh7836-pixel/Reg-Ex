@@ -62,6 +62,15 @@
   .intro h2 { font-family:'Newsreader',serif; font-weight:500; font-size:clamp(2.2rem,5vw,3.4rem); line-height:1.05; letter-spacing:-0.02em; }
   .intro p { color:var(--ink-2); font-size:1.05rem; margin-top:16px; max-width:540px; }
   .scroll-hint { display:flex; align-items:center; gap:9px; margin-top:30px; color:var(--ink-soft); font-size:0.82rem; font-weight:500; }
+
+  .group-toggle { display:flex; align-items:center; gap:12px; margin-top:26px; }
+  .gt-label { font-size:0.72rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-soft); }
+  .gt-seg { display:flex; gap:3px; background:var(--wash); padding:4px; border-radius:999px; border:1px solid var(--line); }
+  .gt-seg button { border:none; background:transparent; color:var(--ink-soft); cursor:pointer; font-family:inherit; font-size:0.82rem; font-weight:600; padding:7px 16px; border-radius:999px; transition:all 0.2s var(--ease); }
+  .gt-seg button.on { background:var(--paper-2); color:var(--accent); box-shadow:var(--shadow-s); }
+
+  .pri-ws { display:inline-flex; align-items:center; gap:6px; font-size:0.68rem; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:10px; }
+  .pri-ws .ws-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
   .scroll-hint svg { width:18px; height:18px; animation:bob 1.8s var(--ease) infinite; }
   @keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(5px)} }
 
@@ -231,6 +240,13 @@
         <div class="eyebrow" data-edit="eyebrow">Regulatory Excellence Division</div>
         <h2 data-edit="headline">A month-by-month view of what matters most.</h2>
         <p data-edit="introtext">Scroll to move through the calendar. Each month brings its own set of priorities into focus — what we're driving, who owns it, and where it stands.</p>
+        <div class="group-toggle">
+          <span class="gt-label">Group by</span>
+          <div class="gt-seg" id="groupToggle">
+            <button data-group="month">Month</button>
+            <button data-group="ws">Workstream</button>
+          </div>
+        </div>
         <div class="scroll-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>Scroll to begin</div>
       </div>
       <div id="monthsFlow"></div>
@@ -254,18 +270,19 @@
           <div class="field"><label>Description / goal</label><textarea id="f-desc" placeholder="What are we trying to achieve?"></textarea></div>
           <div class="f3">
             <div class="field"><label>Month</label><select id="f-month"></select></div>
+            <div class="field"><label>Workstream</label><select id="f-ws"></select></div>
             <div class="field"><label>Owner</label><input type="text" id="f-owner" placeholder="Name" /></div>
-            <div class="field"><label>Priority</label><select id="f-prio"><option value="high">High</option><option value="med" selected>Medium</option><option value="low">Low</option></select></div>
           </div>
           <div class="f2">
+            <div class="field"><label>Priority</label><select id="f-prio"><option value="high">High</option><option value="med" selected>Medium</option><option value="low">Low</option></select></div>
             <div class="field"><label>Status</label><input type="text" id="f-status" placeholder="e.g. In progress" /></div>
-            <div class="field"><label>Progress</label><div class="range-wrap"><input type="range" id="f-prog" min="0" max="100" step="5" value="0" /><span class="range-val" id="f-prog-val">0%</span></div></div>
           </div>
+          <div class="field"><label>Progress</label><div class="range-wrap"><input type="range" id="f-prog" min="0" max="100" step="5" value="0" /><span class="range-val" id="f-prog-val">0%</span></div></div>
           <button class="btn btn-primary" id="addBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg> Add priority</button>
         </div>
         <div class="panel">
           <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg> All priorities</h3>
-          <p class="pd">Grouped by month, in display order. Edit, delete, or reorder within a month.</p>
+          <p class="pd">Grouped by month, showing each item's workstream. Edit, delete, or reorder.</p>
           <div id="plannerList"></div>
         </div>
       </div>
@@ -281,6 +298,14 @@
           </div>
           <button class="btn btn-ghost" id="addMonthBtn" style="width:100%; justify-content:center; margin-bottom:16px;">Add month</button>
           <div id="monthManager"></div>
+        </div>
+        <div class="panel">
+          <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/></svg> Workstreams</h3>
+          <p class="pd">The categories from your workshop plan. Add or remove streams; items can be filed under any of them.</p>
+          <div class="field"><label>Add workstream</label>
+            <div style="display:flex; gap:10px;"><input type="text" id="f-newws" placeholder="e.g. Stakeholder Relations" /><button class="btn btn-ghost" id="addWsBtn" style="white-space:nowrap;">Add</button></div>
+          </div>
+          <div id="wsManager"></div>
         </div>
         <div class="panel">
           <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/></svg> Theme &amp; feel</h3>
@@ -312,10 +337,11 @@
     <div class="field"><label>Description / goal</label><textarea id="m-desc"></textarea></div>
     <div class="f3">
       <div class="field"><label>Month</label><select id="m-month"></select></div>
+      <div class="field"><label>Workstream</label><select id="m-ws"></select></div>
       <div class="field"><label>Owner</label><input type="text" id="m-owner" /></div>
-      <div class="field"><label>Priority</label><select id="m-prio"><option value="high">High</option><option value="med">Medium</option><option value="low">Low</option></select></div>
     </div>
-    <div class="f2">
+    <div class="f3">
+      <div class="field"><label>Priority</label><select id="m-prio"><option value="high">High</option><option value="med">Medium</option><option value="low">Low</option></select></div>
       <div class="field"><label>Status</label><input type="text" id="m-status" /></div>
       <div class="field"><label>Progress</label><div class="range-wrap"><input type="range" id="m-prog" min="0" max="100" step="5" /><span class="range-val" id="m-prog-val">0%</span></div></div>
     </div>
@@ -329,6 +355,9 @@
 const KEY = 'regExcellenceWorkPlan_v1';
 function id(){ return 'p' + Math.random().toString(36).slice(2,9); }
 
+const WORKSTREAMS_SEED = [{"id": "ws1", "name": "Training", "color": "#2f7de0"}, {"id": "ws2", "name": "Digital Transformation", "color": "#7b5ea8"}, {"id": "ws3", "name": "Regulatory Process", "color": "#2a8a78"}, {"id": "ws4", "name": "Directives", "color": "#c08a2a"}, {"id": "ws5", "name": "Process Design", "color": "#c4452f"}, {"id": "ws6", "name": "Projects", "color": "#4a8f6d"}, {"id": "ws7", "name": "Communication", "color": "#d96b3a"}];
+const ITEMS_SEED = [{"id": "p29326ml", "title": "INSP 100", "desc": "Hypothetical placeholder — team to define scope, deliverable, and dependencies.", "month": "m1", "ws": "ws1", "owner": "R. Okafor", "prio": "low", "status": "Upcoming", "prog": 0}, {"id": "plg2tjf8", "title": "App Review", "desc": "Hypothetical placeholder — team to define scope, deliverable, and dependencies.", "month": "m2", "ws": "ws1", "owner": "R. Okafor", "prio": "high", "status": "Upcoming", "prog": 0}, {"id": "pz2ka7ed", "title": "SDM Training", "desc": "Hypothetical placeholder — team to define scope, deliverable, and dependencies.", "month": "m3", "ws": "ws1", "owner": "Shinoy", "prio": "med", "status": "Scoping", "prog": 0}, {"id": "pb3u2m7o", "title": "How To: Systems", "desc": "Hypothetical placeholder — team to define scope, deliverable, and dependencies.", "month": "m4", "ws": "ws1", "owner": "T. Nguyen", "prio": "med", "status": "Planning", "prog": 0}, {"id": "paf3r09f", "title": "Legacy INI 3", "desc": "Hypothetical placeholder — team to define scope, deliverable, and dependencies.", "month": "m2", "ws": "ws2", "owner": "T. Nguyen", "prio": "med", "status": "In progress", "prog": 0}, {"id": "po6sbegz", "title": "CEC Synthesia Reporting", "desc": "Hypothetical placeholder — team to define scope, deliverable, and dependencies.", "month": "m3", "ws": "ws2", "owner": "Shinoy", "prio": "med", "status": "Planning", "prog": 0}, {"id": "pebannd4", "title": "App Performance", "desc": "Hypothetical placeholder — team to define scope, deliverable, and dependencies.", "month": "m4", "ws": "ws2", "owner": "Dana", "prio": "low", "status": "Planning", "prog": 0}, {"id": "pemrvftv", "title": "INSP CEC Performance", "desc": "Hypothetical placeholder — team to define scope, deliverable, and dependencies.", "month": "m5", "ws": "ws2", "owner": "Shinoy", "prio": "low", "status": "Not started", "prog": 0}, {"id": "pipgad35", "title": "Revenue Env Liability", "desc": "Hypothetical placeholder — team to define scope, deliverable, and dependencies.", "month": "m6", "ws": "ws2", "owner": "Priya", "prio": "med", "status": "Planning", "prog": 0}, {"id": "p6mi0yhz", "title": "CLAT", "desc": "Hypothetical placeholder — team to define scope, deliverable, and dependencies.", "month": "m7", "ws": "ws2", "owner": "Dana", "prio": "med", "status": "Not started", "prog": 0}, {"id": "prtbnlzg", "title": "S&G App / ECSS", "desc": "Hypothetical placeholder — team to define scope, deliverable, and dependencies.", "month": "m8", "ws": "ws2", "owner": "Shinoy", "prio": "med", "status": "Scoping", "prog": 0}, {"id": "p2qavsye", "title": "CARS Update", "desc": "Hypothetical placeholder — team to define scope, deliverable, and dependencies.", "month": "m1", "ws": "ws2", "owner": "Shinoy", "prio": "high", "status": "Scoping", "prog": 0}, {"id": "ppaxx3i4", "title": "Spatial Needs", "desc": "Hypothetical placeholder — team to define scope, deliverable, and dependencies.", "month": "m2", "ws": "ws2", "owner": "R. Okafor", "prio": "med", "status": "Planning", "prog": 0}, {"id": "pljtopmk", "title": "Software Licenses / Tracker", "desc": "Hypothetical placeholder — team to define scope, deliverable, and dependencies.", "month": "m3", "ws": "ws2", "owner": "T. Nguyen", "prio": "med", "status": "Planning", "prog": 0}, {"id": "p4f0dggc", "title": "Test Scripts", "desc": "Hypothetical placeholder — team to define scope, deliverable, and dependencies.", "month": "m4", "ws": "ws2", "owner": "Team", "prio": "med", "status": "Scoping", "prog": 0}, {"id": "pzq05s7l", "title": "Renewals (Lifecycle)", "desc": "Hypothetical placeholder — team to define scope, deliverable, and dependencies.", "month": "m3", "ws": "ws3", "owner": "T. Nguyen", "prio": "high", "status": "Scoping", "prog": 0}, {"id": "po49ernn", "title": "Assignment Approvals / Amendments", "desc": "Hypothetical placeholder — team to define scope, deliverable, and dependencies.", "month": "m4", "ws": "ws3", "owner": "T. Nguyen", "prio": "high", "status": "Not started", "prog": 0}, {"id": "pr02pdcl", "title": "Cancellation", "desc": "Hypothetical placeholder — team to define scope, deliverable, and dependencies.", "month": "m5", "ws": "ws3", "owner": "Marcus", "prio": "med", "status": "Upcoming", "prog": 0}, {"id": "pifxi2v7", "title": "TFA's", "desc": "Hypothetical placeholder — team to define scope, deliverable, and dependencies.", "month": "m6", "ws": "ws3", "owner": "Team", "prio": "med", "status": "Upcoming", "prog": 0}, {"id": "pcb4wtcb", "title": "Finance / Revenue", "desc": "Hypothetical placeholder — team to define scope, deliverable, and dependencies.", "month": "m7", "ws": "ws3", "owner": "Team", "prio": "high", "status": "Planning", "prog": 0}, {"id": "petuiee2", "title": "Application Process Compliance", "desc": "Hypothetical placeholder — team to define scope, deliverable, and dependencies.", "month": "m8", "ws": "ws3", "owner": "Team", "prio": "med", "status": "Not started", "prog": 0}, {"id": "pivwf4e0", "title": "Merit SDM", "desc": "Hypothetical placeholder — team to define scope, deliverable, and dependencies.", "month": "m1", "ws": "ws3", "owner": "R. Okafor", "prio": "high", "status": "Planning", "prog": 0}, {"id": "payyaeff", "title": "Rec Cert / LOFC", "desc": "Hypothetical placeholder — team to define scope, deliverable, and dependencies.", "month": "m2", "ws": "ws3", "owner": "T. Nguyen", "prio": "high", "status": "In progress", "prog": 0}, {"id": "p0vy3238", "title": "Closure / Cancellation / No Entry", "desc": "Hypothetical placeholder — team to define scope, deliverable, and dependencies.", "month": "m3", "ws": "ws3", "owner": "Shinoy", "prio": "high", "status": "In progress", "prog": 0}, {"id": "pf4boh55", "title": "Abandonment / Struck Fees", "desc": "Hypothetical placeholder — team to define scope, deliverable, and dependencies.", "month": "m4", "ws": "ws3", "owner": "Marcus", "prio": "high", "status": "In progress", "prog": 0}, {"id": "ptjm7kv2", "title": "MO LURP", "desc": "Hypothetical placeholder — team to define scope, deliverable, and dependencies.", "month": "m5", "ws": "ws3", "owner": "Dana", "prio": "med", "status": "In progress", "prog": 0}, {"id": "pzqm1mny", "title": "Rangeland", "desc": "Hypothetical placeholder — team to define scope, deliverable, and dependencies.", "month": "m4", "ws": "ws4", "owner": "Priya", "prio": "med", "status": "Scoping", "prog": 0}, {"id": "pii5wcer", "title": "FNC", "desc": "Hypothetical placeholder — team to define scope, deliverable, and dependencies.", "month": "m5", "ws": "ws4", "owner": "R. Okafor", "prio": "med", "status": "Not started", "prog": 0}, {"id": "p24rn0y7", "title": "Land Sales", "desc": "Hypothetical placeholder — team to define scope, deliverable, and dependencies.", "month": "m6", "ws": "ws4", "owner": "Dana", "prio": "med", "status": "Upcoming", "prog": 0}, {"id": "p2uecrcr", "title": "LRR Referral", "desc": "Hypothetical placeholder — team to define scope, deliverable, and dependencies.", "month": "m5", "ws": "ws5", "owner": "Team", "prio": "med", "status": "In progress", "prog": 0}, {"id": "pbiz3mbr", "title": "PLS (Avaline) Alerts", "desc": "Hypothetical placeholder — team to define scope, deliverable, and dependencies.", "month": "m6", "ws": "ws5", "owner": "Priya", "prio": "med", "status": "Not started", "prog": 0}, {"id": "ph2g8xem", "title": "Finance LMIP", "desc": "Hypothetical placeholder — team to define scope, deliverable, and dependencies.", "month": "m7", "ws": "ws5", "owner": "Priya", "prio": "low", "status": "In progress", "prog": 0}, {"id": "pla48clo", "title": "MSSC", "desc": "Hypothetical placeholder — team to define scope, deliverable, and dependencies.", "month": "m8", "ws": "ws5", "owner": "Marcus", "prio": "med", "status": "Upcoming", "prog": 0}, {"id": "p76kzof0", "title": "PLAR Tables", "desc": "Hypothetical placeholder — team to define scope, deliverable, and dependencies.", "month": "m1", "ws": "ws5", "owner": "T. Nguyen", "prio": "low", "status": "Scoping", "prog": 0}, {"id": "p23may96", "title": "Codes", "desc": "Hypothetical placeholder — team to define scope, deliverable, and dependencies.", "month": "m2", "ws": "ws5", "owner": "R. Okafor", "prio": "med", "status": "Planning", "prog": 0}, {"id": "punghnpy", "title": "LAT", "desc": "Hypothetical placeholder — team to define scope, deliverable, and dependencies.", "month": "m3", "ws": "ws5", "owner": "Shinoy", "prio": "med", "status": "Upcoming", "prog": 0}, {"id": "puqbw6fc", "title": "Sale / Auction Website", "desc": "Hypothetical placeholder — team to define scope, deliverable, and dependencies.", "month": "m6", "ws": "ws6", "owner": "Dana", "prio": "med", "status": "Upcoming", "prog": 0}, {"id": "p0r5bne1", "title": "Reporting / Analytics Enhancements", "desc": "Hypothetical placeholder — team to define scope, deliverable, and dependencies.", "month": "m7", "ws": "ws6", "owner": "R. Okafor", "prio": "high", "status": "Scoping", "prog": 0}, {"id": "p8vi4j77", "title": "S&G Regulatory Enhancement", "desc": "Hypothetical placeholder — team to define scope, deliverable, and dependencies.", "month": "m8", "ws": "ws6", "owner": "R. Okafor", "prio": "low", "status": "Planning", "prog": 0}, {"id": "pfo279s9", "title": "Disturbance Standards", "desc": "Hypothetical placeholder — team to define scope, deliverable, and dependencies.", "month": "m1", "ws": "ws6", "owner": "T. Nguyen", "prio": "med", "status": "Upcoming", "prog": 0}, {"id": "p69qtynt", "title": "Road Companies for Profit (DLO)", "desc": "Hypothetical placeholder — team to define scope, deliverable, and dependencies.", "month": "m2", "ws": "ws6", "owner": "R. Okafor", "prio": "med", "status": "Upcoming", "prog": 0}, {"id": "p7r5m08h", "title": "Dedicated Revenue RTR", "desc": "Hypothetical placeholder — team to define scope, deliverable, and dependencies.", "month": "m3", "ws": "ws6", "owner": "Team", "prio": "high", "status": "Upcoming", "prog": 0}, {"id": "pyb8c7z8", "title": "Environmental Liability", "desc": "Hypothetical placeholder — team to define scope, deliverable, and dependencies.", "month": "m4", "ws": "ws6", "owner": "R. Okafor", "prio": "high", "status": "Planning", "prog": 0}, {"id": "pfke830z", "title": "Silica Sands", "desc": "Hypothetical placeholder — team to define scope, deliverable, and dependencies.", "month": "m5", "ws": "ws6", "owner": "Marcus", "prio": "med", "status": "Planning", "prog": 0}, {"id": "p5iv147u", "title": "LPI Web Updates", "desc": "Hypothetical placeholder — team to define scope, deliverable, and dependencies.", "month": "m7", "ws": "ws7", "owner": "Shinoy", "prio": "med", "status": "Planning", "prog": 0}, {"id": "pbqibcmj", "title": "Lands Document Registry", "desc": "Hypothetical placeholder — team to define scope, deliverable, and dependencies.", "month": "m8", "ws": "ws7", "owner": "Priya", "prio": "high", "status": "In progress", "prog": 0}, {"id": "puwp5g5h", "title": "Ctee Representation", "desc": "Hypothetical placeholder — team to define scope, deliverable, and dependencies.", "month": "m1", "ws": "ws7", "owner": "R. Okafor", "prio": "med", "status": "Scoping", "prog": 0}];
+
 const DEFAULT = {
   title:'Regulatory Excellence Work Plan',
   sub:'Division Priorities · Monthly',
@@ -336,19 +365,18 @@ const DEFAULT = {
   headline:'A month-by-month view of what matters most.',
   introtext:"Scroll to move through the calendar. Each month brings its own set of priorities into focus — what we're driving, who owns it, and where it stands.",
   months:[
-    { id:'m1', name:'May', year:2026, tag:'Foundations — getting the framework and people in place.' },
-    { id:'m2', name:'June', year:2026, tag:'Build & engage — rolling priorities into active delivery.' },
-    { id:'m3', name:'July', year:2026, tag:'Review & refine — checking progress and adjusting course.' }
+    { id:'m1', name:'May', year:2026, tag:'Foundations — scoping workstreams and standing up the basics.' },
+    { id:'m2', name:'June', year:2026, tag:'Build & engage — active delivery begins across the streams.' },
+    { id:'m3', name:'July', year:2026, tag:'Momentum — core work in flight, first reviews.' },
+    { id:'m4', name:'August', year:2026, tag:'Mid-cycle — refine, integrate, and address gaps.' },
+    { id:'m5', name:'September', year:2026, tag:'Push — deliverables landing, stakeholder checkpoints.' },
+    { id:'m6', name:'October', year:2026, tag:'Consolidate — testing, training, and rollout prep.' },
+    { id:'m7', name:'November', year:2026, tag:'Finalize — close out priorities and confirm outcomes.' },
+    { id:'m8', name:'December', year:2026, tag:'Wrap & plan — year-end review and look-ahead.' }
   ],
-  items:[
-    { id:id(), title:'Modernize inspection framework', desc:'Update the inspection model to reflect the reorganized ministry structure and current regulatory needs.', month:'m1', owner:'Shinoy', prio:'high', status:'In progress', prog:45 },
-    { id:id(), title:'Stakeholder engagement plan', desc:'Map key stakeholders and define a cadence for consultation through the quarter.', month:'m1', owner:'Team', prio:'med', status:'Planning', prog:20 },
-    { id:id(), title:'Data governance baseline', desc:'Establish standards for how regulatory data is captured, stored, and reported.', month:'m1', owner:'Shinoy', prio:'med', status:'Not started', prog:0 },
-    { id:id(), title:'Launch compliance dashboard', desc:'Deliver the live view leadership uses to track compliance across programs.', month:'m2', owner:'Team', prio:'high', status:'On track', prog:35 },
-    { id:id(), title:'Training & onboarding rollout', desc:'Run sessions so staff are fluent in the updated processes and tools.', month:'m2', owner:'Shinoy', prio:'med', status:'Scheduled', prog:10 },
-    { id:id(), title:'Mid-year progress review', desc:'Assess Q2 delivery against the plan and reset priorities where needed.', month:'m3', owner:'Team', prio:'high', status:'Upcoming', prog:0 },
-    { id:id(), title:'Policy alignment audit', desc:'Confirm all active policies map cleanly to the new regulatory model.', month:'m3', owner:'Shinoy', prio:'low', status:'Upcoming', prog:0 }
-  ],
+  workstreams:WORKSTREAMS_SEED,
+  groupBy:'month',
+  items:ITEMS_SEED,
   anim:{ style:'rise', speed:'normal', stagger:90, progress:true, replay:true, bigmonth:true },
   theme:'blue'
 };
@@ -367,7 +395,7 @@ let editing = false;
 let modalId = null;
 let io = null;
 
-function load(){ try { const s=JSON.parse(localStorage.getItem(KEY)); if(s&&s.months&&s.items&&s.anim){ if(!s.theme) s.theme='blue'; return s; } } catch(e){} return JSON.parse(JSON.stringify(DEFAULT)); }
+function load(){ try { const s=JSON.parse(localStorage.getItem(KEY)); if(s&&s.months&&s.items&&s.anim){ if(!s.theme) s.theme='blue'; if(!s.workstreams) s.workstreams=JSON.parse(JSON.stringify(WORKSTREAMS_SEED)); if(!s.groupBy) s.groupBy='month'; return s; } } catch(e){} return JSON.parse(JSON.stringify(DEFAULT)); }
 function save(){ localStorage.setItem(KEY, JSON.stringify(state)); }
 
 function applyTheme(){
@@ -390,33 +418,52 @@ const SPEED_MS = { slow:900, normal:600, fast:380 };
 function initials(n){ if(!n) return '·'; const p=n.trim().split(/\s+/); return (p[0][0]+(p[1]?p[1][0]:'')).toUpperCase(); }
 function esc(s){ return (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 function monthById(mid){ return state.months.find(m=>m.id===mid); }
+function wsById(wid){ return state.workstreams.find(w=>w.id===wid); }
 function itemsFor(mid){ return state.items.filter(i=>i.month===mid); }
+function itemsForWs(wid){ return state.items.filter(i=>i.ws===wid); }
+function groups(){ return state.groupBy==='ws' ? state.workstreams : state.months; }
+function itemsForGroup(g){ return state.groupBy==='ws' ? itemsForWs(g.id) : itemsFor(g.id); }
 
 function renderRail(){
   const rail = document.getElementById('railMonths');
-  rail.innerHTML = state.months.map(m=>`<div class="rail-month" data-jump="${m.id}">${esc(m.name)}<span class="yr">${m.year}</span></div>`).join('');
+  const gs = groups();
+  const isWs = state.groupBy==='ws';
+  rail.innerHTML = gs.map(g=>`<div class="rail-month" data-jump="${g.id}">${esc(g.name)}${isWs?'':`<span class="yr">${g.year}</span>`}</div>`).join('');
   rail.querySelectorAll('[data-jump]').forEach(el=>{ el.onclick=()=>{ const t=document.getElementById('block-'+el.dataset.jump); if(t) t.scrollIntoView({behavior:'smooth',block:'start'}); }; });
-  document.getElementById('railFoot').textContent = state.items.length+' priorities · '+state.months.length+' months';
+  document.querySelector('.rail-label').textContent = isWs ? 'Workstreams' : 'Timeline';
+  document.getElementById('railFoot').textContent = state.items.length+' priorities · '+gs.length+(isWs?' workstreams':' months');
+  // group toggle state
+  document.querySelectorAll('#groupToggle button').forEach(b=> b.classList.toggle('on', b.dataset.group===state.groupBy));
 }
 
 function transformFor(style){ if(style==='zoom') return 'scale(0.9)'; if(style==='slide') return 'translateX(40px)'; return 'translateY(38px)'; }
 function renderFlow(){
   const flow = document.getElementById('monthsFlow');
   const a = state.anim; const dur = SPEED_MS[a.speed]||600;
-  flow.innerHTML = state.months.map(m=>{
-    const items = itemsFor(m.id);
-    const cards = items.length ? items.map((it,idx)=>`
+  const isWs = state.groupBy==='ws';
+  const gs = groups();
+  flow.innerHTML = gs.map(g=>{
+    const items = itemsForGroup(g);
+    const cards = items.length ? items.map((it,idx)=>{
+      const w = wsById(it.ws);
+      const wsTag = (!isWs && w) ? `<div class="pri-ws"><span class="ws-dot" style="background:${w.color}"></span>${esc(w.name)}</div>` : '';
+      const moTag = (isWs && it.month) ? `<div class="pri-ws"><span class="ws-dot" style="background:var(--accent-2)"></span>${esc((monthById(it.month)||{}).name||'')}</div>` : '';
+      return `
       <div class="pri p-${it.prio}" data-item="${it.id}" data-idx="${idx}" style="transition:opacity ${dur}ms var(--ease),transform ${dur}ms var(--ease);">
         <div class="pri-top"><span class="pri-rank">${String(idx+1).padStart(2,'0')}</span><span class="pri-flag flag-${it.prio}">${PRIO[it.prio]}</span></div>
+        ${wsTag}${moTag}
         <h4>${esc(it.title)}</h4>
         <div class="pri-desc">${esc(it.desc)}</div>
         <div class="pri-foot">${it.owner?`<span class="pri-owner"><span class="pri-av">${initials(it.owner)}</span>${esc(it.owner)}</span>`:''}${it.status?`<span class="pri-status"><span class="dot"></span>${esc(it.status)}</span>`:''}</div>
         ${it.prog>0?`<div class="pri-prog"><span data-fill="${it.prog}"></span></div>`:''}
-      </div>`).join('') : `<div class="month-empty">No priorities set for ${esc(m.name)} yet. Add some in the Planner.</div>`;
-    const monthStyle = a.bigmonth ? '' : 'style="font-size:clamp(2rem,5vw,3.4rem)"';
-    return `<section class="month-block" id="block-${m.id}" data-month="${m.id}">
-      <div class="mb-head"><div class="mb-month" ${monthStyle}>${esc(m.name)}</div><div class="mb-year">${m.year}</div><div class="mb-count">${items.length} ${items.length===1?'priority':'priorities'}</div></div>
-      <div class="mb-tag" data-monthtag="${m.id}">${esc(m.tag||'')}</div>
+      </div>`;
+    }).join('') : `<div class="month-empty">No priorities here yet. Add some in the Planner.</div>`;
+    const bigStyle = a.bigmonth ? '' : 'style="font-size:clamp(2rem,5vw,3.4rem)"';
+    const sub = isWs ? `<div class="mb-year">${items.length} ${items.length===1?'item':'items'}</div>` : `<div class="mb-year">${g.year}</div><div class="mb-count">${items.length} ${items.length===1?'priority':'priorities'}</div>`;
+    const tag = isWs ? '' : `<div class="mb-tag" data-monthtag="${g.id}">${esc(g.tag||'')}</div>`;
+    return `<section class="month-block" id="block-${g.id}" data-month="${g.id}">
+      <div class="mb-head"><div class="mb-month" ${bigStyle}>${esc(g.name)}</div>${sub}</div>
+      ${tag}
       <div class="pri-grid">${cards}</div>
     </section>`;
   }).join('');
@@ -454,6 +501,10 @@ function renderPlanner(){
   const opts = state.months.map(m=>`<option value="${m.id}">${esc(m.name)} ${m.year}</option>`).join('');
   document.getElementById('f-month').innerHTML = opts;
   document.getElementById('m-month').innerHTML = opts;
+  const wsOpts = state.workstreams.map(w=>`<option value="${w.id}">${esc(w.name)}</option>`).join('');
+  document.getElementById('f-ws').innerHTML = wsOpts;
+  document.getElementById('m-ws').innerHTML = wsOpts;
+  renderWsManager();
   const mm = document.getElementById('monthManager');
   mm.innerHTML = state.months.map((m,i)=>`
     <div class="row">
@@ -474,7 +525,7 @@ function renderPlanner(){
       return `<div style="font-size:0.72rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-soft);margin:14px 0 8px;">${esc(m.name)} ${m.year}</div>`+
         items.map((it,idx)=>`<div class="row">
           <span class="row-chip" style="background:var(--pr-${it.prio})"></span>
-          <div class="row-main"><div class="rt">${esc(it.title)}</div><div class="rs">${it.owner?esc(it.owner)+' · ':''}${it.status?esc(it.status)+' · ':''}${it.prog}%</div></div>
+          <div class="row-main"><div class="rt">${esc(it.title)}</div><div class="rs">${(wsById(it.ws)||{}).name?esc(wsById(it.ws).name)+' · ':''}${it.owner?esc(it.owner)+' · ':''}${it.status?esc(it.status)+' · ':''}${it.prog}%</div></div>
           <span class="row-tag">${PRIO[it.prio]}</span>
           <div class="reorder"><button data-up="${it.id}" ${idx===0?'disabled style=opacity:.3':''}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg></button><button data-dn="${it.id}" ${idx===items.length-1?'disabled style=opacity:.3':''}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button></div>
           <div class="row-act"><button data-edit="${it.id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button data-del="${it.id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></button></div>
@@ -490,6 +541,27 @@ function renderPlanner(){
 
 function moveItem(iid,dir){ const it=state.items.find(x=>x.id===iid); if(!it) return; const group=itemsFor(it.month); const pos=group.indexOf(it); const swap=group[pos+dir]; if(!swap) return; const gi=state.items.indexOf(it),gj=state.items.indexOf(swap); state.items[gi]=swap; state.items[gj]=it; save(); renderAll(); }
 function moveMonth(mid,dir){ const i=state.months.findIndex(m=>m.id===mid); const j=i+dir; if(j<0||j>=state.months.length) return; [state.months[i],state.months[j]]=[state.months[j],state.months[i]]; save(); renderAll(); }
+
+function renderWsManager(){
+  const wm = document.getElementById('wsManager');
+  if(!wm) return;
+  wm.innerHTML = state.workstreams.map(w=>`
+    <div class="row">
+      <span class="row-chip" style="background:${w.color}"></span>
+      <div class="row-main"><div class="rt">${esc(w.name)}</div><div class="rs">${itemsForWs(w.id).length} items</div></div>
+      <div class="row-act"><button data-delws="${w.id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></button></div>
+    </div>`).join('');
+  wm.querySelectorAll('[data-delws]').forEach(b=> b.onclick=()=>deleteWs(b.dataset.delws));
+}
+function deleteWs(wid){
+  const w=wsById(wid); const n=itemsForWs(wid).length;
+  if(state.workstreams.length<=1){ toast('Keep at least one workstream'); return; }
+  if(!confirm(`Delete workstream "${w.name}"?${n?` Its ${n} item(s) will move to "${state.workstreams.find(x=>x.id!==wid).name}".`:''}`)) return;
+  const fb = state.workstreams.find(x=>x.id!==wid).id;
+  state.items.forEach(it=>{ if(it.ws===wid) it.ws=fb; });
+  state.workstreams = state.workstreams.filter(x=>x.id!==wid);
+  save(); renderAll(); toast('Workstream removed');
+}
 
 function renderThemes(){
   const grid = document.getElementById('themeGrid');
@@ -517,6 +589,15 @@ document.getElementById('set-progress').onchange = e=>{ state.anim.progress=e.ta
 document.getElementById('set-replay').onchange = e=>{ state.anim.replay=e.target.checked; save(); renderFlow(); };
 document.getElementById('set-bigmonth').onchange = e=>{ state.anim.bigmonth=e.target.checked; save(); renderFlow(); };
 
+document.getElementById('addWsBtn').onclick = ()=>{
+  const v = document.getElementById('f-newws').value.trim();
+  if(!v){ toast('Name the workstream'); return; }
+  const palette = ['#2f7de0','#7b5ea8','#2a8a78','#c08a2a','#c4452f','#4a8f6d','#d96b3a','#5170a3','#a85a8a'];
+  const color = palette[state.workstreams.length % palette.length];
+  state.workstreams.push({ id:'ws'+Math.random().toString(36).slice(2,7), name:v, color });
+  document.getElementById('f-newws').value='';
+  save(); renderAll(); toast(v+' added');
+};
 document.getElementById('addMonthBtn').onclick = ()=>{
   const name=document.getElementById('f-newmonth').value; const year=+document.getElementById('f-newyear').value;
   if(state.months.some(m=>m.name===name && m.year===year)){ toast('That month already exists'); return; }
@@ -536,7 +617,7 @@ document.getElementById('m-prog').oninput = e=> document.getElementById('m-prog-
 document.getElementById('addBtn').onclick = ()=>{
   const title=document.getElementById('f-title').value.trim();
   if(!title){ toast('Give the priority a title'); return; }
-  state.items.push({ id:id(), title, desc:document.getElementById('f-desc').value.trim(), month:document.getElementById('f-month').value, owner:document.getElementById('f-owner').value.trim(), prio:document.getElementById('f-prio').value, status:document.getElementById('f-status').value.trim(), prog:+document.getElementById('f-prog').value });
+  state.items.push({ id:id(), title, desc:document.getElementById('f-desc').value.trim(), month:document.getElementById('f-month').value, ws:document.getElementById('f-ws').value, owner:document.getElementById('f-owner').value.trim(), prio:document.getElementById('f-prio').value, status:document.getElementById('f-status').value.trim(), prog:+document.getElementById('f-prog').value });
   save(); renderAll();
   ['f-title','f-desc','f-owner','f-status'].forEach(i=>document.getElementById(i).value='');
   document.getElementById('f-prog').value=0; document.getElementById('f-prog-val').textContent='0%';
@@ -546,7 +627,7 @@ document.getElementById('addBtn').onclick = ()=>{
 function openModal(iid){
   const it=state.items.find(x=>x.id===iid); if(!it) return; modalId=iid;
   document.getElementById('m-name').value=it.title; document.getElementById('m-desc').value=it.desc||'';
-  document.getElementById('m-month').value=it.month; document.getElementById('m-owner').value=it.owner||'';
+  document.getElementById('m-month').value=it.month; document.getElementById('m-ws').value=it.ws||state.workstreams[0].id; document.getElementById('m-owner').value=it.owner||'';
   document.getElementById('m-prio').value=it.prio; document.getElementById('m-status').value=it.status||'';
   document.getElementById('m-prog').value=it.prog; document.getElementById('m-prog-val').textContent=it.prog+'%';
   document.getElementById('modalBg').classList.add('open');
@@ -557,7 +638,7 @@ document.getElementById('modalBg').onclick = e=>{ if(e.target.id==='modalBg') cl
 document.getElementById('m-save').onclick = ()=>{
   const it=state.items.find(x=>x.id===modalId); if(!it) return;
   it.title=document.getElementById('m-name').value.trim()||it.title; it.desc=document.getElementById('m-desc').value.trim();
-  it.month=document.getElementById('m-month').value; it.owner=document.getElementById('m-owner').value.trim();
+  it.month=document.getElementById('m-month').value; it.ws=document.getElementById('m-ws').value; it.owner=document.getElementById('m-owner').value.trim();
   it.prio=document.getElementById('m-prio').value; it.status=document.getElementById('m-status').value.trim();
   it.prog=+document.getElementById('m-prog').value;
   save(); renderAll(); closeModal(); toast('Saved');
@@ -571,6 +652,10 @@ document.getElementById('editToggle').onclick = ()=>{
   document.querySelectorAll('[data-edit]').forEach(el=>{ const key=el.dataset.edit; el.contentEditable=editing; if(editing){ el.onblur=()=>{ state[key]=el.textContent.trim()||state[key]; save(); }; } });
   bindCards();
 };
+
+document.querySelectorAll('#groupToggle button').forEach(b=>{
+  b.onclick=()=>{ state.groupBy=b.dataset.group; save(); renderRail(); renderFlow(); window.scrollTo({top:0,behavior:'smooth'}); };
+});
 
 document.querySelectorAll('.vbtn').forEach(b=>{
   b.onclick=()=>{ const v=b.dataset.view;
